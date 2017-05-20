@@ -4,60 +4,114 @@ import RaisedButton from 'material-ui/RaisedButton';
 import CastBar from './Components/CastBar';
 import PlayerFrame from './Components/PlayerFrame';
 import ManaBar from './Components/ManaBar';
-import Hotbar from './Components/Hotbar'
+import Hotbar from './Components/Hotbar';
+
+const KEY_BINDS = {
+  cancelCast : 'Escape',
+  hotbar1 : '1',
+  hotbar2 : '2',
+}
+const SPELL_DATA = [
+  {
+    name: 'Healing Touch',
+    value: 150,
+    cost: 200,
+    castTime: 1.5,
+  },
+  {
+    name: 'Regrowth',
+    value: 200,
+    cost: 400,
+    castTime: 2,
+  }
+]
+const PLAYER_DATA = [
+  {
+    name: 'Saulty',
+    hp: 200,
+    maxHp: 400,
+    incHp: 0,
+    isAlive: true,
+  },
+  {
+    name: 'Oom',
+    hp: 300,
+    maxHp: 400,
+    incHp: 0,
+    isAlive: true,
+  },
+  {
+    name: 'Mity',
+    hp: 300,
+    maxHp: 1200,
+    incHp: 0,
+    isAlive: true,
+  }
+];
+
 
 class App extends React.Component {
   constructor() {
     super();
+    // setting 'this' to App not #document
+    document.addEventListener("keydown", this.handleKeyDown.bind(this))
+
     this.state = {
       isCasting: false,
       castBarProgress: 0,
+      target: 0,
       spellTarget: 0,
       currentSpell: null,
       mp: 400,
       maxMp: 500,
-      spells: [
-        {
-          name: 'Healing Touch',
-          value: 150,
-          cost: 200,
-          castTime: 1.5,
-        },
-        {
-          name: 'Regrowth',
-          value: 200,
-          cost: 400,
-          castTime: 2,
-        }
+      hotbarActions: [
+        () => this.startCast(SPELL_DATA[0]),
+        () => this.startCast(SPELL_DATA[1]),
       ],
-      players: [
-        {
-          name: 'Saulty',
-          hp: 200,
-          maxHp: 400,
-          incHp: 0,
-          isAlive: true,
-        },
-        {
-          name: 'Oom',
-          hp: 5,
-          maxHp: 400,
-          incHp: 0,
-          isAlive: true,
-        },
-        {
-          name: 'Mity',
-          hp: 300,
-          maxHp: 1200,
-          incHp: 0,
-          isAlive: true,
-        }
-      ]
+      players: PLAYER_DATA
     }
   }
+
   componentDidMount() {
-    this.dmgtick = setInterval(() => this.damage(0, 2), 100)
+    this.castBarTimer = null;
+
+
+    this.manaBarTimer = null;
+
+    this.dmgtick = setInterval(() => {
+      this.damage(0, 2)
+      this.damage(1, 2)
+      this.damage(2, 5)
+    }, 500)
   }
+
+  handleKeyDown(e) {
+      // looks at key, step through KEY_BINDS to see if it has an action?
+    switch(e.key) {
+      case KEY_BINDS.hotbar1:
+        this.state.hotbarActions[0]()
+        break;
+      case KEY_BINDS.hotbar2:
+        this.state.hotbarActions[1]()
+        break;
+      case KEY_BINDS.cancelCast:
+        this.stopCast()
+        break;
+    }
+  }
+  target(playerNo) {
+    this.setState({
+      target: playerNo
+    });
+  }
+
+  adjustMp(value) {
+    const mp = this.state.mp + value
+    this.setState({
+      mp: mp
+    });
+  }
+
   incrementCastBar(inc) {
     const progress = this.state.castBarProgress + inc
     if (progress > 100) {
@@ -66,23 +120,24 @@ class App extends React.Component {
       this.setState({castBarProgress: progress})
     }
   }
-  startCast(spell, playerNo) {
-    if (!this.state.isCasting & this.state.players[playerNo].isAlive) {
+  startCast(spell) {
+    const target = this.state.target
+    if (!this.state.isCasting & this.state.players[target].isAlive) {
+      this.adjustIncHeal(target, spell.value)
+      const inc = 2/spell.castTime // = 100/(castTime*50) at 50hz
+      this.castBarTimer = setInterval(() => this.incrementCastBar(inc), 20)
       this.setState({
         isCasting: true,
         castBarProgress: 0,
         currentSpell: spell,
-        spellTarget: playerNo,
+        spellTarget: target,
       });
-      this.incHeal(playerNo, spell.value)
-      const inc = 2/spell.castTime // = 100/(castTime*50) at 50hz
-      this.timer = setInterval(() => this.incrementCastBar(inc), 20)
     }
   }
   stopCast() {
     if (this.state.isCasting) {
-      clearInterval(this.timer)
-      this.incHeal(this.state.spellTarget, -this.state.currentSpell.value)
+      clearInterval(this.castBarTimer)
+      this.adjustIncHeal(this.state.spellTarget, -this.state.currentSpell.value)
       this.setState({
         isCasting: false,
         castBarProgress: 0,
@@ -92,11 +147,11 @@ class App extends React.Component {
   }
   finishCast() {
     if (this.state.players[this.state.spellTarget].isAlive) {
-      this.heal(this.state.spellTarget, this.state.currentSpell.value)
+      this.adjustHp(this.state.spellTarget, this.state.currentSpell.value)
+      this.adjustMp(-this.state.currentSpell.cost)
     }
     this.stopCast();
   }
-
   damage(playerNo, value) {
     let players = this.state.players
     let newHp = players[playerNo].hp - value
@@ -108,8 +163,7 @@ class App extends React.Component {
     players[playerNo].hp = newHp
     this.setState(players: players)
   }
-
-  heal(playerNo, value) {
+  adjustHp(playerNo, value) {
     let players = this.state.players
     let newHp = players[playerNo].hp + value
 
@@ -119,8 +173,7 @@ class App extends React.Component {
     players[playerNo].hp = newHp
     this.setState(players: players)
   }
-
-  incHeal(playerNo, value) {
+  adjustIncHeal(playerNo, value) {
     let players = this.state.players
     players[playerNo].incHp += value
     this.setState(players: players)
@@ -128,14 +181,15 @@ class App extends React.Component {
 
   render() {
     const players = this.state.players.map((player, i) =>
-      <PlayerFrame key={i} player={player}
-        onClick={() => this.startCast(this.state.spells[0], i)}
+      <PlayerFrame
+        key={i}
+        player={player}
+        onMouseEnter={() => this.target(i)}
       />
     );
 
     return (
       <div>
-        <RaisedButton label="STOP" onClick={() => this.stopCast()} />
         <ManaBar
           mp={this.state.mp}
           maxMp={this.state.maxMp}
@@ -145,15 +199,11 @@ class App extends React.Component {
           value={this.state.castBarProgress}
         />
         {players}
-        <Hotbar spells={this.state.spells} />
       </div>
     )
   }
 }
 
+// <Hotbar spells={this.state.hotbarActions} />
 
-// <CastBar
-//   spellName={'jilly'}
-//   value={this.state.castBarProgress}
-// />
 export default App;

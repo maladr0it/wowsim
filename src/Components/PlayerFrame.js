@@ -33,7 +33,7 @@ const PlayerFrame = (props) => {
   };
 
   return (
-    <div onClick={props.onClick} style={containerStyle}>
+    <div onMouseEnter={props.onMouseEnter} style={containerStyle}>
       <div style={infoStyle}>
         <div style={{float: 'left'}}>
           <div>{props.player.name}</div>

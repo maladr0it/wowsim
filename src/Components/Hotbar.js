@@ -4,7 +4,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 // lists all spells
 const Hotbar = (props) => {
   const spells = props.spells.map((spell, i) =>
-    <RaisedButton label={spell.name} />
+    <RaisedButton key={i} label={spell.name} />
   );
 
   return (
