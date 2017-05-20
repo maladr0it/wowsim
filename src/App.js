@@ -1,10 +1,13 @@
 import React from 'react';
-import RaisedButton from 'material-ui/RaisedButton';
 
 import CastBar from './Components/CastBar';
-import PlayerFrame from './Components/PlayerFrame';
 import ManaBar from './Components/ManaBar';
 import Hotbar from './Components/Hotbar';
+
+import Player from './Containers/Player';
+
+import ht_logo from './img/spell_nature_healingtouch.jpg';
+import rg_logo from './img/spell_nature_resistnature.jpg';
 
 const KEY_BINDS = {
   cancelCast : 'Escape',
@@ -14,15 +17,17 @@ const KEY_BINDS = {
 const SPELL_DATA = [
   {
     name: 'Healing Touch',
+    icon: ht_logo,
     value: 150,
-    cost: 200,
+    cost: 42,
     castTime: 1.5,
   },
   {
     name: 'Regrowth',
+    icon: rg_logo,
     value: 200,
-    cost: 400,
-    castTime: 2,
+    cost: 121,
+    castTime: 1,
   }
 ]
 const PLAYER_DATA = [
@@ -62,11 +67,17 @@ class App extends React.Component {
       target: 0,
       spellTarget: 0,
       currentSpell: null,
-      mp: 400,
-      maxMp: 500,
-      hotbarActions: [
-        () => this.startCast(SPELL_DATA[0]),
-        () => this.startCast(SPELL_DATA[1]),
+      mp: 1800,
+      maxMp: 2000,
+      hotbarItems: [
+        {
+          spell: SPELL_DATA[0],
+          keyBind: KEY_BINDS.hotbar1
+        },
+        {
+          spell: SPELL_DATA[1],
+          keyBind: KEY_BINDS.hotbar2
+        }
       ],
       players: PLAYER_DATA
     }
@@ -75,27 +86,30 @@ class App extends React.Component {
   componentDidMount() {
     this.castBarTimer = null;
 
-
-    this.manaBarTimer = null;
+    this.manaBarTimer = setInterval(() => {
+      this.adjustMp(21)
+    }, 2000);
 
     this.dmgtick = setInterval(() => {
       this.damage(0, 2)
       this.damage(1, 2)
-      this.damage(2, 5)
-    }, 500)
+      this.damage(2, 20)
+    }, 500);
   }
 
   handleKeyDown(e) {
-      // looks at key, step through KEY_BINDS to see if it has an action?
+    const hotbarItems = this.state.hotbarItems
     switch(e.key) {
-      case KEY_BINDS.hotbar1:
-        this.state.hotbarActions[0]()
+      case hotbarItems[0].keyBind:
+        this.startCast(hotbarItems[0].spell);
         break;
-      case KEY_BINDS.hotbar2:
-        this.state.hotbarActions[1]()
+      case hotbarItems[1].keyBind:
+        this.startCast(hotbarItems[1].spell);
         break;
       case KEY_BINDS.cancelCast:
         this.stopCast()
+        break;
+      default:
         break;
     }
   }
@@ -106,9 +120,16 @@ class App extends React.Component {
   }
 
   adjustMp(value) {
-    const mp = this.state.mp + value
+    let newMp = this.state.mp + value;
+
+    if (newMp > this.state.maxMp) {
+      newMp = this.state.maxMp;
+    }
+    if (newMp < 0) {
+      newMp = 0;
+    }
     this.setState({
-      mp: mp
+      mp: newMp
     });
   }
 
@@ -121,16 +142,18 @@ class App extends React.Component {
     }
   }
   startCast(spell) {
-    const target = this.state.target
-    if (!this.state.isCasting & this.state.players[target].isAlive) {
-      this.adjustIncHeal(target, spell.value)
+    const spellTarget = this.state.target
+    if ( !this.state.isCasting &
+    this.state.players[spellTarget].isAlive &
+    !(spell.cost > this.state.mp)) {
+      this.adjustIncHeal(spellTarget, spell.value)
       const inc = 2/spell.castTime // = 100/(castTime*50) at 50hz
       this.castBarTimer = setInterval(() => this.incrementCastBar(inc), 20)
       this.setState({
         isCasting: true,
         castBarProgress: 0,
         currentSpell: spell,
-        spellTarget: target,
+        spellTarget: spellTarget,
       });
     }
   }
@@ -146,7 +169,10 @@ class App extends React.Component {
     }
   }
   finishCast() {
-    if (this.state.players[this.state.spellTarget].isAlive) {
+    const target = this.state.players[this.state.spellTarget]
+    const currentSpell = this.state.currentSpell
+
+    if (target.isAlive & !(currentSpell.cost > this.state.mp)) {
       this.adjustHp(this.state.spellTarget, this.state.currentSpell.value)
       this.adjustMp(-this.state.currentSpell.cost)
     }
@@ -181,12 +207,12 @@ class App extends React.Component {
 
   render() {
     const players = this.state.players.map((player, i) =>
-      <PlayerFrame
+      <Player
         key={i}
-        player={player}
-        onMouseEnter={() => this.target(i)}
+        {...player}
+        handleMouseEnter={() => this.target(i)}
       />
-    );
+  );
 
     return (
       <div>
@@ -199,11 +225,15 @@ class App extends React.Component {
           value={this.state.castBarProgress}
         />
         {players}
+        <Hotbar
+          items={this.state.hotbarItems}
+          actionHandler={(spell)=>this.startCast(spell)}
+        />
       </div>
     )
   }
 }
 
-// <Hotbar spells={this.state.hotbarActions} />
+
 
 export default App;

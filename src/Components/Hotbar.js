@@ -1,15 +1,17 @@
 import React from 'react';
-import RaisedButton from 'material-ui/RaisedButton';
 
 // lists all spells
 const Hotbar = (props) => {
-  const spells = props.spells.map((spell, i) =>
-    <RaisedButton key={i} label={spell.name} />
+  const items = props.items.map((item, i) =>
+    <img src={item.spell.icon}
+      key={i}
+      onClick={()=>props.actionHandler(item.spell)}
+    />
   );
 
   return (
     <div>
-      {spells}
+      {items}
     </div>
   );
 };

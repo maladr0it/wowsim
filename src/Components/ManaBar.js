@@ -15,7 +15,7 @@ const ManaBar = (props) => {
   };
   const infoStyle = {
     width: 'inherit',
-    position: 'fixed'
+    position: 'absolute'
   };
   return (
     <div style={containerStyle}>
