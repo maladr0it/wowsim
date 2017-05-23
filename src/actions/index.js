@@ -3,19 +3,23 @@ export const setTarget = (target) => ({
   target: target,
 })
 
-export const startCast = () => ({
+export const startCast = (spell) => ({
   type: 'START_CAST',
+  spell: spell,
+})
+
+export const finishCast = () => ({
+  type: 'FINISH_CAST',
 })
 
 export const hurtTarget = (target, dmg) => {
-  if (target) {
-    return {
-      type: 'HURT_PLAYER',
-      target: target,
-      value: dmg,
-    }
-  }
   return {
-    type: 'NO_TARGET'
+    type: 'HURT_TARGET',
+    target: target,
+    value: dmg,
   }
 }
+
+// export const updateCast = () => {
+//   type: 'UPDATE_CAST',
+// }

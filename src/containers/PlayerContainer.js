@@ -3,13 +3,16 @@ import { connect } from 'react-redux'
 
 import { hurtTarget } from '../actions'
 import { startCast } from '../actions'
+import { finishCast } from '../actions'
 
-const PlayerContainer = ({ targetId, isCasting, startCast, hurtTarget }) => (
-  <div>
-    <button onClick={() => startCast()}>CAST</button>
-    <button onClick={() => hurtTarget(targetId, 129)}>HURT</button>
-    {targetId}{isCasting}
-  </div>
+import PlayerComponent from '../components/PlayerComponent'
+
+const PlayerContainer = ({
+  targetId,
+  startCast,
+  finishCast,
+  hurtTarget}) => (
+  <PlayerComponent targetId={targetId} onCastClick={()=>startCast(()=>finishCast())} />
 )
 
 
@@ -21,5 +24,5 @@ const mapStateToProps = (state) => ({
 
 export default connect(
   mapStateToProps,
-  { startCast, hurtTarget }
+  { startCast, finishCast, hurtTarget }
 )(PlayerContainer)

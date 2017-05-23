@@ -1,6 +1,7 @@
 const initialState = {
   targetId: undefined,
-  isCasting: 'NAH',
+  castingTimer: undefined,
+  currentSpell: undefined, // this is a function
 }
 
 const player = (state = initialState, action) => {
@@ -13,9 +14,10 @@ const player = (state = initialState, action) => {
         targetId: target
       }
     case 'START_CAST':
+      const { spell } = action
       return {
         ...state,
-        isCasting: 'YE'
+        castingTimer: setTimeout(spell, 1000)
       }
     default:
       return state

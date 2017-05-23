@@ -11,7 +11,7 @@ const initialState = {
 
 const playerList = (state = initialState, action) => {
   switch (action.type) {
-    case 'HURT_PLAYER':
+    case 'HURT_TARGET':
       const { target, value } = action
       state[target].hp -= value
       return {
