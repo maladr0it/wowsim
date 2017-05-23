@@ -1,5 +1,5 @@
 import React from 'react';
-import PlayerFrame from '../Components/PlayerFrame'
+import PlayerFrame from '../components/PlayerFrame'
 
 class Player extends React.Component {
   // what is a player?

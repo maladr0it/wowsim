@@ -1,16 +1,20 @@
 import React from 'react';
 
-import CastBar from './Components/CastBar';
-import ManaBar from './Components/ManaBar';
-import Hotbar from './Components/Hotbar';
-
-import Player from './Containers/Player';
+import CastBar from './components/CastBar';
+import ManaBar from './components/ManaBar';
+import Hotbar from './components/Hotbar';
+import Player from './containers/Player';
 
 import ht_logo from './img/spell_nature_healingtouch.jpg';
 import rg_logo from './img/spell_nature_resistnature.jpg';
 
+
+import PartyContainer from './containers/PartyContainer'
+import PlayerContainer from './containers/PlayerContainer'
+
+
 const KEY_BINDS = {
-  cancelCast : 'Escape',
+  cancelCast : 'w',
   hotbar1 : '1',
   hotbar2 : '2',
 }
@@ -229,11 +233,11 @@ class App extends React.Component {
           items={this.state.hotbarItems}
           actionHandler={(spell)=>this.startCast(spell)}
         />
+      <PartyContainer />
+      <PlayerContainer />
       </div>
     )
   }
 }
-
-
 
 export default App;
