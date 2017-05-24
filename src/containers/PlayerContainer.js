@@ -1,28 +1,34 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
-import { hurtTarget } from '../actions'
+// import { hurtTarget } from '../actions'
 import { startCast } from '../actions'
-import { finishCast } from '../actions'
+import { stopCast } from '../actions'
 
 import PlayerComponent from '../components/PlayerComponent'
 
 const PlayerContainer = ({
   targetId,
+  castProgress,
   startCast,
-  finishCast,
-  hurtTarget}) => (
-  <PlayerComponent targetId={targetId} onCastClick={()=>startCast(()=>finishCast())} />
+  stopCast,
+  }) => (
+  <PlayerComponent
+    targetId={targetId}
+    castProgress={castProgress}
+    onCastClick={()=>startCast()}
+    onStopClick={()=>stopCast()}
+  />
 )
-
-
+// onCastClick={()=>startCast(1)}
 
 const mapStateToProps = (state) => ({
   targetId: state.player.targetId,
-  isCasting: state.player.isCasting
+  castProgress: state.player.castProgress,
 })
+
 
 export default connect(
   mapStateToProps,
-  { startCast, finishCast, hurtTarget }
+  { startCast, stopCast }
 )(PlayerContainer)

@@ -1,11 +1,10 @@
 const initialState = {
   targetId: undefined,
-  castingTimer: undefined,
-  currentSpell: undefined, // this is a function
+  isCasting: false,
+  castProgress: 0,
 }
 
 const player = (state = initialState, action) => {
-  console.log(action.type)
   switch (action.type) {
     case 'SET_TARGET':
       const { target } = action
@@ -13,12 +12,14 @@ const player = (state = initialState, action) => {
         ...state,
         targetId: target
       }
-    case 'START_CAST':
-      const { spell } = action
+    case 'SET_IS_CASTING':
       return {
         ...state,
-        castingTimer: setTimeout(spell, 1000)
+        castProgress: 0,
+        isCasting: action.bool,
       }
+    case 'SET_PROGRESS':
+      return { ...state, castProgress: action.value}
     default:
       return state
   }
