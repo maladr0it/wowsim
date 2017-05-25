@@ -1,25 +1,48 @@
 const initialState = {
-  targetId: undefined,
+  target: 1,
   isCasting: false,
-  castProgress: 0,
+  spellTimer: undefined,
+  mp: 800,
+  currentSpell: {
+    name: 'HEALING TOUCH',
+    target: 2,
+    heal: 400,
+    cost: 229,
+  },
 }
 
 const player = (state = initialState, action) => {
   switch (action.type) {
     case 'SET_TARGET':
-      const { target } = action
       return {
         ...state,
-        targetId: target
+        target: action.target
       }
-    case 'SET_IS_CASTING':
+    case 'START_CAST':
+      if (!state.isCasting) {
+        return {
+          ...state,
+          isCasting: true,
+          spellTimer: setTimeout(action.onFinish, 1000),
+        }
+      } else {
+        return state
+      }
+    case 'STOP_CAST':
+      clearTimeout(state.spellTimer)
       return {
         ...state,
-        castProgress: 0,
-        isCasting: action.bool,
+        isCasting: false,
+        spellTimer: undefined,
       }
-    case 'SET_PROGRESS':
-      return { ...state, castProgress: action.value}
+    case 'CAST':
+      const { spell } = action
+      return {
+        ...state,
+        isCasting: false,
+        spellTimer: undefined,
+        mp: state.mp - spell.cost
+      }
     default:
       return state
   }

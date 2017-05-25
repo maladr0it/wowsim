@@ -12,11 +12,4 @@ const Party = ({ players, handleClick }) => {
     </div>
   )
 }
-
 export default Party
-
-
-// const playerList = players.map(player =>
-//   <div>
-//     {player.name}
-//   </div>

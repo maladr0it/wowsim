@@ -3,17 +3,6 @@ export const setTarget = (target) => ({
   target,
 })
 
-export const setIsCasting = (bool) => ({
-  type: 'SET_IS_CASTING',
-  bool
-})
-
-export const setProgress = (value) => ({
-  type: 'SET_PROGRESS',
-  value
-
-})
-
 export const hurtTarget = (target, dmg) => {
   return {
     type: 'HURT_TARGET',
@@ -22,21 +11,27 @@ export const hurtTarget = (target, dmg) => {
   }
 }
 
-export const startCast = () => (dispatch, getState) => {
-  if (!getState().player.isCasting) {
-    dispatch(setIsCasting(true))
-    dispatch(updateCast(20))
+export const startCast = (onFinish) => {
+  return {
+    type: "START_CAST",
+    onFinish,
   }
 }
 
-export const updateCast = (period, progress=0) => (dispatch, getState) => {
-  if (getState().player.isCasting) {
-    dispatch(setProgress(progress))
-    progress += 1
-    setTimeout(() => dispatch(updateCast(period, progress)), period)
+export const stopCast = () => {
+  return {
+    type: "STOP_CAST"
   }
 }
 
-export const stopCast = () => (dispatch) => {
-  dispatch(setIsCasting(false))
+export const cast = (spell) => {
+  return {
+    type: "CAST",
+    spell
+  }
 }
+
+export const evaluateCast = () => (dispatch) => {
+  dispatch()
+}
+// usefuckoff big thunk?

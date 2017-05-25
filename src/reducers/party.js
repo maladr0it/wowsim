@@ -17,6 +17,12 @@ const playerList = (state = initialState, action) => {
       return {
         ...state
       }
+    case 'CAST':
+      const { spell } = action
+      state[spell.target].hp += spell.heal
+      return {
+        ...state,
+      }
     default:
       return state
   }

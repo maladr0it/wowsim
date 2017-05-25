@@ -1,34 +1,38 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
-// import { hurtTarget } from '../actions'
 import { startCast } from '../actions'
 import { stopCast } from '../actions'
+import { cast } from '../actions'
+import { hurtTarget } from '../actions'
 
 import PlayerComponent from '../components/PlayerComponent'
 
 const PlayerContainer = ({
-  targetId,
-  castProgress,
-  startCast,
-  stopCast,
+  target, mp, targetObj, currentSpell, startCast, stopCast, cast
   }) => (
   <PlayerComponent
-    targetId={targetId}
-    castProgress={castProgress}
-    onCastClick={()=>startCast()}
+    targetId={target}
+    onCastClick={()=>startCast(() => cast(currentSpell))}
     onStopClick={()=>stopCast()}
+    mp={mp}
+    targetHp={targetObj.hp}
   />
 )
-// onCastClick={()=>startCast(1)}
+
+const targetById = (party, id) => {
+  return party[id]
+}
+
+// FUCK YES! we can now access state of other reducers!!!
 
 const mapStateToProps = (state) => ({
-  targetId: state.player.targetId,
-  castProgress: state.player.castProgress,
+  target : state.player.target,
+  targetObj : targetById(state.party, state.player.target),
+  mp : state.player.mp,
+  currentSpell : state.player.currentSpell
 })
-
-
 export default connect(
   mapStateToProps,
-  { startCast, stopCast }
+  { startCast, stopCast, cast, hurtTarget }
 )(PlayerContainer)
