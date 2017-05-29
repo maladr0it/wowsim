@@ -1,31 +1,40 @@
-import React from 'react';
+import React from 'react'
 
-const CastBar = (props) => {
-  const containerStyle = {
-    width: '300px',
-    height: '100px',
-    background: '#EEEEEE',
+const castBarStyle = {
+  flex: 'none',
+  height: '100%',
+  background: '#FFF9C4',
+}
+
+class CastBar extends React.Component {
+  constructor() {
+    super()
+    this.state = {
+      elapsed: 0,
+      request: undefined
+    }
   }
-
-  const barStyle = {
-    width: props.value+'%',
-    height: '100%',
-    background: '#FFF9C4'
+  componentDidMount() {
+    this.setState({
+      request: requestAnimationFrame(() => this.tick())
+    })
   }
-
-  const infoStyle = {
-    width: 'inherit',
-    position: 'fixed'
+  tick() {
+    const elapsed = new Date().getTime() - this.props.startTime
+    this.setState({
+      elapsed: elapsed,
+      request: requestAnimationFrame(() => this.tick())
+    })
   }
-
-  const info = (props.spell) ? props.spell.name : '';
-
-  return (
-    <div style={containerStyle}>
-      <div style={infoStyle}>{info}</div>
-      <div style={barStyle} />
-    </div>
-  );
-};
-
-export default CastBar;
+  componentWillUnmount() {
+    cancelAnimationFrame(this.state.request)
+  }
+  render() {
+    console.log('rendering cast bar...')
+    const castBarPerc = (this.state.elapsed / (this.props.duration*1000)) * 100
+    return (
+      <div style={{...castBarStyle, width: castBarPerc+'%'}} />
+    )
+  }
+}
+export default CastBar

@@ -1,88 +1,74 @@
 import React from 'react'
+import CastBar from './CastBar'
 
-class PlayerComponent extends React.Component {
-  constructor() {
-    super()
-    this.state = {
-      elapsed: 0,
-      request: undefined,
-    }
-  }
-  componentDidMount() {
-    this.setState({
-      request: requestAnimationFrame(() => this.tick())
-      // request: requestAnimationFrame(this.tick)
-    })
-  }
-      // this.interval = setInterval(this.forceUpdate.bind(this), 1)
-
-  tick() {
-    const elapsed = new Date().getTime() - this.props.startedCastAt
-    this.setState({
-      elapsed: elapsed,
-      request: requestAnimationFrame(() => this.tick())
-    })
-  }
-
-  componentWillUnmount() {
-    // clearInterval(this.interval)
-    cancelAnimationFrame(this.state.request)
-  }
-
-  render() {
-    const {onCastClick, onStopClick, targetId, mp, targetHp} = this.props
-    const castProgress = this.state.elapsed/1000/3 * 100
-
-    const containerStyle = {
-      width: '100px',
-      height: '50px',
-      background: '#EEEEEE',
-    }
-    const barStyle = {
-      width: castProgress+'%',
-      height: '100%',
-      background: '#B3E5FC',
-    }
-
-    return (
-      <div>
-        {targetHp}
-        <button onClick={onCastClick}>CAST</button>
-        <button onClick={onStopClick}>STOP</button>
-        target: {targetId} elapsed: {this.state.elapsed}
-        <br />
-        MP: {mp}
-        <div style={containerStyle}>
-          <div style={barStyle} />
-        </div>
-      </div>
-    )
-  }
-
+const mpBarContainerStyle = {
+  display: 'flex',
+  width: '300px',
+  height: '50px',
+  background: '#EEEEEE',
+}
+const mpBarStyle = {
+  flex: 'none',
+  height: '100%',
+  background: '#B3E5FC',
+}
+const mpInfoStyle = {
+  width: 'inherit',
+  position: 'absolute'
 }
 
-// const PlayerComponent = ({ targetId, castProgress, onCastClick, onStopClick }) => {
-//   const containerStyle = {
-//     width: '100px',
-//     height: '50px',
-//     background: '#EEEEEE',
-//   }
-//   const barStyle = {
-//     width: castProgress+'%',
-//     height: '100%',
-//     background: '#B3E5FC',
-//   }
-//
-//   return (
-//     <div>
-//       <button onClick={onCastClick}>CAST</button>
-//       <button onClick={onStopClick}>STOP</button>
-//       target: {targetId}
-//       <div style={containerStyle}>
-//         <div style={barStyle} />
-//       </div>
-//     </div>
-//   )
-// }
+const castBarContainerStyle = {
+  display: 'flex',
+  width: '300px',
+  height: '50px',
+  background: '#EEEEEE',
+}
+
+const PlayerComponent = ({ player, target, startCast, cancelCast }) => {
+  const mpPerc = player.mp / player.maxMp * 100
+  const mpBar = (
+    <div style={mpBarContainerStyle}>
+      <div style={{...mpBarStyle, width: mpPerc+"%"}} />
+      <div style={mpInfoStyle}>
+        {player.mp} / {player.maxMp}
+      </div>
+    </div>
+  )
+  const castBar = (
+    <div style={castBarContainerStyle}>
+      {(player.currentCast) ?
+        <CastBar
+          spellName='SPELL'
+          startTime={player.currentCast.startTime}
+          duration={player.currentCast.duration}
+          spellName
+        /> : <div />
+      }
+    </div>
+  )
+  // const castBar = (player.castStartTime) ?
+  //   <CastBar
+  //     spellName='SPELL'
+  //     startTime={player.castStartTime}
+  //     duration={player.castDuration}
+  //     spellName
+  //   /> : <div />
+  const spellBar = Object.keys(player.spells).map((key =>
+    <button
+      key={key}
+      onClick={() => startCast(player.spells[key], player.targetId)}>
+      {player.spells[key].name} : {player.spells[key].cost}
+    </button>
+  ))
+  return (
+    <div>
+      {mpBar}
+      {spellBar}
+      {castBar}
+      <div>target: {target.name}</div>
+      <button onClick={()=>cancelCast()}>CANCEL</button>
+    </div>
+  )
+}
 
 export default PlayerComponent

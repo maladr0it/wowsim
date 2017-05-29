@@ -1,8 +1,12 @@
 import { combineReducers } from 'redux'
-import party from './party'
-import player from './player'
+import party, * as fromParty from './party'
+import player, * as fromPlayer from './player'
 
 export default combineReducers({
+  player,
   party,
-  player
 })
+
+const getTargetId = (state) => fromPlayer.getTargetId(state.player)
+const getMember = (state, id) => fromParty.getMember(state.party, id)
+export const getTarget = (state) => getMember(state, getTargetId(state))

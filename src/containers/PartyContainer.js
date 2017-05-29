@@ -1,20 +1,14 @@
-import React from 'react'
 import { connect } from 'react-redux'
 
-
 import { setTarget } from '../actions'
-import Party from '../components/Party'
+import PartyComponent from '../components/PartyComponent'
 
-
-const PartyContainer = ({ players, setTarget }) => (
-  <Party players={players} handleClick={setTarget} />
-)
 
 const mapStateToProps = (state) => ({
-  players: state.party
+  members: state.party
 })
 
 export default connect(
   mapStateToProps,
   { setTarget }
-)(PartyContainer)
+)(PartyComponent)
