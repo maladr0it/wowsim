@@ -1,36 +1,40 @@
-const evaluateCast = (spell, targetId, state) => {
-  if ((state.player.mp >= spell.cost) & (state.party[targetId].hp > 0)) {
+const evaluateCast = (cast, state) => {
+  if ((state.player.mp >= cast.cost) & (state.party[cast.targetId].hp > 0)) {
     return true
   }
   return false
 }
-const cast = (spell, targetId) => ({
+const cast = (cast) => ({
   type: 'CAST',
-  spell,
-  targetId
+  cast,
 })
-
-const attemptCast = (spell, targetId) => (dispatch, getState) => {
-  if (evaluateCast(spell, targetId, getState())) {
-    dispatch(cast(spell, targetId))
+const attemptCast = () => (dispatch, getState) => {
+  const currentCast = getState().player.currentCast
+  if (evaluateCast(currentCast, getState())) {
+    dispatch(cast(currentCast))
   } else {
-    dispatch(cancelCast(spell, targetId))
+    dispatch(cancelCast(currentCast))
   }
 }
-export const cancelCast = (spell, targetId) => ({
-  type: 'CANCEL_CAST',
-  spell,
-  targetId
-})
+export const cancelCast = (cast) => (dispatch) => {
+  if (cast) {
+    clearTimeout(cast.timeoutId)
+    dispatch({
+      type: 'CANCEL_CAST',
+      cast,
+    })
+  }
+}
 export const startCast = (spell, targetId) => (dispatch, getState) => {
   const state = getState()
-  if (evaluateCast(spell, targetId, state) & !state.player.currentCast) {
-    setTimeout(() => dispatch(attemptCast(spell, targetId)), spell.castTime*1000)
+  if (evaluateCast({...spell, targetId}, state) & !state.player.currentCast) {
+    const timeoutId = setTimeout(() => dispatch(attemptCast()), spell.castTime*1000)
     dispatch(
       {
         type: 'START_CAST',
-        spell: state.
+        spell,
         targetId,
+        timeoutId,
         now: new Date().getTime()
       }
     )

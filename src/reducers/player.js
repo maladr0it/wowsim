@@ -31,13 +31,14 @@ const player = (state = initialState, action) => {
       }
     }
     case 'START_CAST': {
-      const { spell, targetId, now } = action
+      const { spell, targetId, timeoutId, now } = action
       // used for rendering the cast-bar
       // and determining if player is already casting
       const currentCast = {
-        targetId: targetId,
+        ...spell,
         startTime: now,
-        duration: spell.castTime,
+        targetId,
+        timeoutId,
       }
       return {
         ...state,
@@ -51,11 +52,11 @@ const player = (state = initialState, action) => {
       }
     }
     case 'CAST': {
-      const { spell } = action
+      const { cast } = action
       return {
         ...state,
         currentCast: undefined,
-        mp: state.mp - spell.cost,
+        mp: state.mp - cast.cost,
       }
     }
     default:

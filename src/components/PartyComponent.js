@@ -28,7 +28,7 @@ const Party = ({ members, setTarget }) => {
     const percHp = (member.hp / member.maxHp) * 100
     const incHealPerc = (member.incHeal / member.maxHp) * 100
     return (
-      <div style={containerStyle} key={key} onClick={() => setTarget(key)}>
+      <div style={containerStyle} key={key} onMouseEnter={() => setTarget(key)}>
         <div style={{...barStyle, width: percHp+'%'}} />
         <div style={{...incHealStyle, width: incHealPerc+'%'}} />
         <div style={infoStyle}>

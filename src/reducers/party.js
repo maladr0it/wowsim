@@ -27,26 +27,26 @@ const party = (state = initialState, action) => {
       }
     }
     case 'CAST': {
-      const { spell, targetId } = action
-      let target = state[targetId]
-      let newHp = target.hp + spell.value
+      const { cast } = action
+      let target = state[cast.targetId]
+      let newHp = target.hp + cast.value
       if (newHp > target.maxHp) {
         newHp = target.maxHp
       }
       target.hp = newHp
-      target.incHeal -= spell.value
+      target.incHeal -= cast.value
       return {
         ...state,
-        [targetId]: target
+        [cast.targetId]: target
       }
     }
     case 'CANCEL_CAST': {
-      const { spell, targetId } = action
-      let target = state[targetId]
-      target.incHeal -= spell.value
+      const { cast } = action
+      let target = state[cast.targetId]
+      target.incHeal -= cast.value
       return {
         ...state,
-        [targetId]: target
+        [cast.targetId]: target
       }
     }
     default:

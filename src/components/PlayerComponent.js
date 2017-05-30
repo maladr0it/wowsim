@@ -40,19 +40,12 @@ const PlayerComponent = ({ player, target, startCast, cancelCast }) => {
         <CastBar
           spellName='SPELL'
           startTime={player.currentCast.startTime}
-          duration={player.currentCast.duration}
+          duration={player.currentCast.castTime}
           spellName
         /> : <div />
       }
     </div>
   )
-  // const castBar = (player.castStartTime) ?
-  //   <CastBar
-  //     spellName='SPELL'
-  //     startTime={player.castStartTime}
-  //     duration={player.castDuration}
-  //     spellName
-  //   /> : <div />
   const spellBar = Object.keys(player.spells).map((key =>
     <button
       key={key}
@@ -66,7 +59,7 @@ const PlayerComponent = ({ player, target, startCast, cancelCast }) => {
       {spellBar}
       {castBar}
       <div>target: {target.name}</div>
-      <button onClick={()=>cancelCast()}>CANCEL</button>
+      <button onClick={()=>cancelCast(player.currentCast)}>CANCEL</button>
     </div>
   )
 }

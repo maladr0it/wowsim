@@ -30,7 +30,6 @@ class CastBar extends React.Component {
     cancelAnimationFrame(this.state.request)
   }
   render() {
-    console.log('rendering cast bar...')
     const castBarPerc = (this.state.elapsed / (this.props.duration*1000)) * 100
     return (
       <div style={{...castBarStyle, width: castBarPerc+'%'}} />
