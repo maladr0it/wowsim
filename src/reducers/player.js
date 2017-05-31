@@ -1,7 +1,7 @@
 const initialState = {
   mp: 200,
   maxMp: 300,
-  targetId: 1,
+  targetId: "1",
   currentCast : undefined,
   spells: {
     1: {
@@ -23,35 +23,27 @@ export const getTargetId = (state) => state.targetId
 
 const player = (state = initialState, action) => {
   switch (action.type) {
-    case 'SET_TARGET': {
+    case 'TARGET_SET': {
       const { target } = action
       return {
         ...state,
         targetId: target
       }
     }
-    case 'START_CAST': {
-      const { spell, targetId, timeoutId, now } = action
-      // used for rendering the cast-bar
-      // and determining if player is already casting
-      const currentCast = {
-        ...spell,
-        startTime: now,
-        targetId,
-        timeoutId,
-      }
+    case 'CAST_STARTED': {
+      const { cast } = action
       return {
         ...state,
-        currentCast: currentCast
+        currentCast: cast
       }
     }
-    case 'CANCEL_CAST' : {
+    case 'CAST_CANCELLED' : {
       return {
         ...state,
         currentCast: undefined
       }
     }
-    case 'CAST': {
+    case 'CAST_COMPLETED': {
       const { cast } = action
       return {
         ...state,

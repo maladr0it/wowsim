@@ -24,7 +24,7 @@ const castBarContainerStyle = {
   background: '#EEEEEE',
 }
 
-const PlayerComponent = ({ player, target, startCast, cancelCast }) => {
+const Player = ({ player, target, attemptStartCast, cancelCast }) => {
   const mpPerc = player.mp / player.maxMp * 100
   const mpBar = (
     <div style={mpBarContainerStyle}>
@@ -38,10 +38,9 @@ const PlayerComponent = ({ player, target, startCast, cancelCast }) => {
     <div style={castBarContainerStyle}>
       {(player.currentCast) ?
         <CastBar
-          spellName='SPELL'
+          spellName={player.currentCast.name}
           startTime={player.currentCast.startTime}
           duration={player.currentCast.castTime}
-          spellName
         /> : <div />
       }
     </div>
@@ -49,7 +48,7 @@ const PlayerComponent = ({ player, target, startCast, cancelCast }) => {
   const spellBar = Object.keys(player.spells).map((key =>
     <button
       key={key}
-      onClick={() => startCast(player.spells[key], player.targetId)}>
+      onClick={() => attemptStartCast(player.spells[key], player.targetId)}>
       {player.spells[key].name} : {player.spells[key].cost}
     </button>
   ))
@@ -57,11 +56,11 @@ const PlayerComponent = ({ player, target, startCast, cancelCast }) => {
     <div>
       {mpBar}
       {spellBar}
+      <button onClick={() => cancelCast(player.currentCast)}>CANCEL</button>
       {castBar}
       <div>target: {target.name}</div>
-      <button onClick={()=>cancelCast(player.currentCast)}>CANCEL</button>
     </div>
   )
 }
 
-export default PlayerComponent
+export default Player

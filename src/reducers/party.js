@@ -17,16 +17,16 @@ export const getMember = (state, id) => state[id]
 
 const party = (state = initialState, action) => {
   switch (action.type) {
-    case 'START_CAST': {
-      const { spell, targetId } = action
-      let target = state[targetId]
-      target.incHeal += spell.value
+    case 'CAST_STARTED': {
+      const { cast } = action
+      let target = state[cast.targetId]
+      target.incHeal += cast.value
       return {
         ...state,
-        [targetId]: target
+        [cast.targetId]: target
       }
     }
-    case 'CAST': {
+    case 'CAST_COMPLETED': {
       const { cast } = action
       let target = state[cast.targetId]
       let newHp = target.hp + cast.value
@@ -40,7 +40,7 @@ const party = (state = initialState, action) => {
         [cast.targetId]: target
       }
     }
-    case 'CANCEL_CAST': {
+    case 'CAST_CANCELLED': {
       const { cast } = action
       let target = state[cast.targetId]
       target.incHeal -= cast.value
@@ -53,5 +53,4 @@ const party = (state = initialState, action) => {
       return state
   }
 }
-
 export default party
