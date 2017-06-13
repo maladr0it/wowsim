@@ -16,7 +16,6 @@ const mpInfoStyle = {
   width: 'inherit',
   position: 'absolute'
 }
-
 const castBarContainerStyle = {
   display: 'flex',
   width: '300px',
@@ -24,7 +23,8 @@ const castBarContainerStyle = {
   background: '#EEEEEE',
 }
 
-const Player = ({ player, target, attemptStartCast, cancelCast }) => {
+const Player = ({ player, target,
+  attemptStartCast, attemptCancelCast }) => {
   const mpPerc = player.mp / player.maxMp * 100
   const mpBar = (
     <div style={mpBarContainerStyle}>
@@ -56,7 +56,7 @@ const Player = ({ player, target, attemptStartCast, cancelCast }) => {
     <div>
       {mpBar}
       {spellBar}
-      <button onClick={() => cancelCast(player.currentCast)}>CANCEL</button>
+      <button onClick={() => attemptCancelCast(player.currentCast)}>CANCEL</button>
       {castBar}
       <div>target: {target.name}</div>
     </div>

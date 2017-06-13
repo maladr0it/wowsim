@@ -1,13 +1,9 @@
 import React from 'react';
 
-import PartyContainer from './containers/PartyContainer'
-import PlayerContainer from './containers/PlayerContainer'
-import AlertsContainer from './containers/AlertsContainer'
+import GameContainer from './containers/GameContainer'
 
 const App = () =>
   <div>
-    <PartyContainer />
-    <PlayerContainer />
-    <AlertsContainer />
+    <GameContainer />
   </div>
 export default App;

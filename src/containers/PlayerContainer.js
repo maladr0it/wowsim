@@ -2,7 +2,7 @@ import { connect } from 'react-redux'
 import PlayerComponent from '../components/PlayerComponent'
 import { getTarget } from '../reducers'
 
-import { attemptStartCast, cancelCast } from '../actions'
+import { attemptStartCast, attemptCancelCast } from '../actions'
 
 const mapStateToProps = (state) => ({
   player: state.player,
@@ -10,5 +10,5 @@ const mapStateToProps = (state) => ({
 })
 export default connect(
   mapStateToProps,
-  { attemptStartCast, cancelCast }
+  { attemptStartCast, attemptCancelCast }
   )(PlayerComponent)

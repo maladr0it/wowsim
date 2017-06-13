@@ -1,28 +1,27 @@
 import React from 'react'
 
+const containerStyle = {
+  display: 'flex',
+  overflow: 'visible',
+  width: '300px',
+  height: '100px',
+  background: '#EEEEEE',
+}
+const barStyle = {
+  flex: 'none',
+  height: '100%',
+  background: '#9CCC65',
+}
+const incHealStyle = {
+  flex: 'none',
+  height: '100%',
+  background: '#DCEDC8',
+}
+const infoStyle = {
+  width: 'inherit',
+  position: 'absolute'
+}
 const Party = ({ members, setTarget }) => {
-  const containerStyle = {
-    display: 'flex',
-    overflow: 'visible',
-    width: '300px',
-    height: '100px',
-    background: '#EEEEEE',
-  }
-  const barStyle = {
-    flex: 'none',
-    height: '100%',
-    background: '#9CCC65',
-  }
-  const incHealStyle = {
-    flex: 'none',
-    height: '100%',
-    background: '#DCEDC8',
-  }
-  const infoStyle = {
-    width: 'inherit',
-    position: 'absolute'
-  }
-
   const memberList = Object.keys(members).map((key => {
     const member = members[key]
     const percHp = (member.hp / member.maxHp) * 100

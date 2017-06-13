@@ -1,20 +1,23 @@
 const initialState = {
   messages: []
 }
+const handleMessage = (type) => {
+  switch (type) {
+    case 'ERR_NOT_ENOUGH_MANA': {
+      return 'You don\'t have enough mana!'
+    }
+    default:
+      return 'Cancelled'
+  }
+}
 const alerts = (state = initialState, action) => {
   switch (action.type) {
-    case 'ERR_NOT_ENOUGH_MANA': {
-      const message = 'not enough mana!'
+    case 'CAST_CANCELLED': {
+      const { reason } = action
+      const errorMessage = handleMessage(reason)
       return {
         ...state,
-        messages: state.messages.concat(message)
-      }
-    }
-    case 'ERR_INVALID_TARGET': {
-      const message = 'your target is dead...'
-      return {
-        ...state,
-        messages: state.messages.concat(message)
+        messages: state.messages.concat(errorMessage)
       }
     }
     default:

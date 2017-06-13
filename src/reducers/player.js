@@ -2,7 +2,8 @@ const initialState = {
   mp: 200,
   maxMp: 300,
   targetId: "1",
-  currentCast : undefined,
+  currentCast: undefined, // has structure { name, castTime, cost, value, targetId, startTime, timeoutId}
+  mpIntervalId: undefined,
   spells: {
     1: {
       name: 'Healing Touch',
@@ -18,11 +19,17 @@ const initialState = {
     }
   }
 }
-
 export const getTargetId = (state) => state.targetId
 
 const player = (state = initialState, action) => {
   switch (action.type) {
+    case 'GAME_STARTED': {
+      const { mpIntervalId } = action
+      return {
+        ...state,
+        mpIntervalId: mpIntervalId
+      }
+    }
     case 'TARGET_SET': {
       const { target } = action
       return {
@@ -49,6 +56,17 @@ const player = (state = initialState, action) => {
         ...state,
         currentCast: undefined,
         mp: state.mp - cast.cost,
+      }
+    }
+    case 'TICK_MP': {
+      console.log('TICK')
+      let newMp = state.mp + 15
+      if (newMp > state.maxMp) {
+        newMp = state.maxMp
+      }
+      return {
+        ...state,
+        mp: newMp
       }
     }
     default:
