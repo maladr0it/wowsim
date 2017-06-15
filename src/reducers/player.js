@@ -39,6 +39,7 @@ const player = (state = initialState, action) => {
     }
     case 'CAST_STARTED': {
       const { cast } = action
+      console.log('player started casting')
       return {
         ...state,
         currentCast: cast
@@ -59,7 +60,6 @@ const player = (state = initialState, action) => {
       }
     }
     case 'TICK_MP': {
-      console.log('TICK')
       let newMp = state.mp + 15
       if (newMp > state.maxMp) {
         newMp = state.maxMp

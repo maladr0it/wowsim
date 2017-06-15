@@ -1,11 +1,11 @@
-const evaluateCast = ( cast, state ) => {
+const evaluateCast = (cast, state) => {
   if (state.player.mp < cast.cost) {
     return {
       passed: false,
       reason: 'ERR_NOT_ENOUGH_MANA'
     }
   }
-  if (state.party[cast.targetId].hp <= 0) {
+  if (!state.party.aliveMemberIds.includes(cast.targetId)) {
     return {
       passed: false,
       reason: 'ERR_INVALID_TARGET'
@@ -31,9 +31,25 @@ const completeCast = (cast) => ({
 const tickMp = () => ({
   type: 'TICK_MP'
 })
-const randomDamage = () => ({
-
+const damageTarget = (targetId, value) => ({
+ type: 'TARGET_DAMAGED',
+ targetId,
+ value
 })
+const attackParty = () => (dispatch, getState) => {
+  // aquire random target
+  const state = getState()
+  const validIds = state.party.aliveMemberIds
+  if (validIds.length == 0) {
+    dispatch(stopGame()) // game over.  this should clear every timer ID
+  }
+  // should have a start and complete attack
+  const targetId = validIds[Math.floor(Math.random()*validIds.length)]
+  const value = Math.floor(Math.random() * 100)
+  const timeout = Math.random() * 1000
+  dispatch(damageTarget(targetId, value))
+  const attackTimeoutId = setTimeout(() => dispatch(attackParty()), timeout)
+}
 const attemptCompleteCast = () => (dispatch, getState) => {
   const currentCast = getState().player.currentCast
   const castResult = evaluateCast(currentCast, getState())
@@ -43,12 +59,18 @@ const attemptCompleteCast = () => (dispatch, getState) => {
     dispatch(completeCast(currentCast))
   }
 }
-export const startGame = () => (dispatch) => {
-  const mpIntervalId = setInterval(() => dispatch(tickMp()), 500)
+export const handleKeydown = (event) => (dispatch, getState) => {
+  dispatch(startGame())
+}
+export const startGame = () => (dispatch, getState) => {
+  const state = getState()
+  const mpIntervalId = setInterval(() => dispatch(tickMp()), 2000)
   dispatch({
     type: 'GAME_STARTED',
     mpIntervalId,
+    // attackTimeoutId,
   })
+  dispatch(attackParty())
 }
 export const stopGame= () => (dispatch, getState) => {
   clearInterval(getState().player.mpIntervalId)
@@ -62,6 +84,7 @@ export const setTarget = (target) => ({
 })
 export const attemptStartCast = (spell, targetId) => (dispatch, getState) => {
   const state = getState()
+  // awkward here
   if (!state.game.isRunning || state.player.currentCast) return
   const cast = { ...spell, targetId }
   const castResult = evaluateCast(cast, state)

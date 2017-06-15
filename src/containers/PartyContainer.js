@@ -4,7 +4,7 @@ import { setTarget } from '../actions'
 import PartyComponent from '../components/PartyComponent'
 
 const mapStateToProps = (state) => ({
-  members: state.party
+  members: state.party.members
 })
 
 export default connect(

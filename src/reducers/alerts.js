@@ -6,6 +6,9 @@ const handleMessage = (type) => {
     case 'ERR_NOT_ENOUGH_MANA': {
       return 'You don\'t have enough mana!'
     }
+    case 'ERR_INVALID_TARGET': {
+      return 'Your target is dead.'
+    }
     default:
       return 'Cancelled'
   }

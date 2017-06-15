@@ -12,9 +12,7 @@ const GameComponent = ( { isRunning, startGame, stopGame }) => {
     </div>
     :
     <div>
-      <PartyContainer />
-      <PlayerContainer />
-      <AlertsContainer />
+      STOPPED
     </div>
   return (
     <div>
